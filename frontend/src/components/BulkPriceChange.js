@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import axios from "axios/index";
+import {RAIL_SERVER_URL} from "./App";
 
 class BulkPriceChange extends Component {
   state = {
@@ -25,6 +27,13 @@ class BulkPriceChange extends Component {
     });
   };
 
+  patchToServer(e) {
+    e.preventDefault();
+    let item = this.props.item;
+    item.us_price += this.state.nominalChange;
+    axios.patch(`${RAIL_SERVER_URL}/items/${item.id}`, item)
+  }
+
   render() {
     return(
       <div className='container'>
@@ -40,15 +49,17 @@ class BulkPriceChange extends Component {
         <p>Select increase(+) or decrease(-) by percentage or nominal value:</p>
         <label>Percentage Change: </label>
         <input type='number'
-               value={this.state.percentIncrease}
+               value={this.state.percentChange}
                placeholder='eg. 0.03 or -0.03'
                onChange={(e) => this.handlePercentChange(e.target.value)}/>
         <br />
         <label>Nominal Change: </label>
         <input type='number'
-               value={this.state.nominalIncrease}
+               value={this.state.nominalChange}
                placeholder='eg. 5.00 or -5.00'
                onChange={(e) => this.handleNominalChange(e.target.value)} />
+        <input type='submit'
+               onClick={(e) => this.patchToServer(e)} />
       </div>
     )
   }
