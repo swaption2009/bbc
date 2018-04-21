@@ -1,0 +1,21 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  category: MyString
+  sku: MyString
+  us_name: MyString
+  us_price: 1.5
+  us_currency: MyString
+  jp_name: MyString
+  jp_price: 1.5
+  jp_currency: MyString
+
+two:
+  category: MyString
+  sku: MyString
+  us_name: MyString
+  us_price: 1.5
+  us_currency: MyString
+  jp_name: MyString
+  jp_price: 1.5
+  jp_currency: MyString
