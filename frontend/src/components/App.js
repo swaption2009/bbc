@@ -27,7 +27,7 @@ class App extends Component {
         <br />
         <Button className="col-md-4 btn-outline-info"
                 onClick={() => this.fetchData()} >
-          Fetch Data to Backend
+          Fetch and Populate Data
         </Button>
         { this.state.fetchAPIComponent ? <API /> : null }
         <hr />

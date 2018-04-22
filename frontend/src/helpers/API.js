@@ -29,7 +29,7 @@ class API extends Component {
     }
   };
 
-  buildItem() {
+  buildItems() {
     let us_items = this.state.us_items;
     let jp_items = this.state.jp_items;
     let promises = [];
@@ -50,8 +50,44 @@ class API extends Component {
     }
 
     axios.all(promises)
-      .then(res => console.log("post success: ", res))
-      .catch(err => console.log("post error: ", err))
+      .then(res => console.log("POST Items success: ", res))
+      .catch(err => console.log("POST Items error: ", err))
+  };
+
+  buildStores() {
+    let stores = this.state.stores;
+    let promises = [];
+
+    for (let i = 0; i < stores.length; i++) {
+      let store = {};
+
+      store.name = stores[i].name;
+      store.address = stores[i].address;
+      store.countryIsoAlpha2 = stores[i].countryIsoAlpha2;
+
+      axios.post(`${RAIL_SERVER_URL}/stores`, store)
+    }
+
+    axios.all(promises)
+      .then(res => console.log("POST Stores success: ", res))
+      .catch(err => console.log("POST Stores error: ", err))
+  };
+
+  buildCategories() {
+    let categories = this.state.categories;
+    let promises = [];
+
+    for (let i = 0; i < categories.length; i++) {
+      let category = {};
+
+      category.name = categories[i].category;
+
+      axios.post(`${RAIL_SERVER_URL}/categories`, category)
+    }
+
+    axios.all(promises)
+      .then(res => console.log("POST Categories success: ", res))
+      .catch(err => console.log("POST Categories error: ", err))
   };
 
   componentDidMount() {
@@ -76,12 +112,14 @@ class API extends Component {
 
   render() {
     if (this.state.jp_items.length !== 0) {
-      this.buildItem();
+      this.buildItems();
+      this.buildStores();
+      this.buildCategories();
     }
 
     return (
       <div className="container">
-        { this.state.loaded ? <div>Data has been fetched!</div> : null }
+        { this.state.loaded ? <div>Data fetched. Populating database...check console log for status!</div> : null }
       </div>
     );
   }

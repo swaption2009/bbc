@@ -10,7 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_04_20_222823) do
+ActiveRecord::Schema.define(version: 2018_04_22_153159) do
+
+  create_table "categories", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "categories_items", id: false, force: :cascade do |t|
+    t.integer "category_id"
+    t.integer "item_id"
+    t.index ["category_id"], name: "index_categories_items_on_category_id"
+    t.index ["item_id"], name: "index_categories_items_on_item_id"
+  end
 
   create_table "items", force: :cascade do |t|
     t.string "category"
@@ -21,6 +34,14 @@ ActiveRecord::Schema.define(version: 2018_04_20_222823) do
     t.string "jp_name"
     t.float "jp_price"
     t.string "jp_currency"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "stores", force: :cascade do |t|
+    t.string "name"
+    t.string "address"
+    t.string "countryIsoAlpha2"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

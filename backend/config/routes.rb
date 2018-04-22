@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resources :categories
+  resources :stores
   resources :items do
     collection do
       put :category_price_change
