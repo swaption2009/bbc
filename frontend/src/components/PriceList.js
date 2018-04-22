@@ -1,35 +1,43 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 import { Table, Button } from 'reactstrap';
-import SkuPriceChange from './SkuPriceChange';
-import BulkPriceChange from './BulkPriceChange';
-import { RAIL_SERVER_URL } from './App';
+import axios from 'axios';
+import PriceListChange from './PriceListChange';
+import {
+  RAIL_SERVER_URL,
+  CATEGORIES,
+} from '../helpers/const';
 
 class PriceList extends Component {
   state = {
-    items: [],
-    showSkuPriceChange: false,
-    showBulkPriceChange: false,
+    item: '',
+    selectedItems: [],
+    toggleCategoryPriceChange: false,
+    toggleItemPriceChange: false,
   };
 
   componentDidMount() {
-    axios.get(`${RAIL_SERVER_URL}/items`).then(res =>
-      this.setState({
-        items: res.data
-      })
-    )
+    axios.get(`${RAIL_SERVER_URL}/items`)
+      .then(res => this.setState({ items: res.data }))
   }
 
-  togglePriceChangeCategory() {
+  toggleCategoryPriceChange() {
+    this.setState({ toggleCategoryPriceChange: !this.state.toggleCategoryPriceChange })
+  }
+
+  toggleItemPriceChange(e, item) {
     this.setState({
-      showBulkPriceChange: !this.state.showBulkPriceChange,
+      toggleItemPriceChange: !this.state.toggleItemPriceChange,
+      item,
     })
   }
 
-  togglePriceChangeSku() {
-    this.setState({
-      showSkuPriceChange: !this.state.showSkuPriceChange,
-    })
+  updateSelectedItemsPrice() {
+    let payload = {
+      product_ids: this.state.selectedItems,
+    };
+    axios.put(`${RAIL_SERVER_URL}/items/update_selected_items_price`, payload)
+      .then(res => console.log('success', res))
+      .catch(err => console.log('fail', err))
   }
 
   render() {
@@ -39,17 +47,24 @@ class PriceList extends Component {
 
     return (
       <div>
-        <Button color='danger'
-                onClick={e => this.togglePriceChangeCategory(e)}>
-          Toggle to Change Price by Category
+        <Button className='col-3 btn-outline-danger offset-1'
+                onClick={e => this.toggleCategoryPriceChange()}>
+          Price Change by Category
         </Button>
-        {this.state.showBulkPriceChange ?
-          <BulkPriceChange items={this.state.items} /> :
-          null
-        }
-        <Table>
+        { this.state.toggleCategoryPriceChange ? <PriceListChange categories={CATEGORIES} /> : null }
+        <hr />
+        { this.state.toggleItemPriceChange ? <PriceListChange item={this.state.item} /> : null }
+
+        <Button className='col-5 btn-outline-success offset-1'
+                onClick={e => this.updateSelectedItemsPrice()}>
+          Increase US price for selected checkbox items by 10%
+        </Button>
+        <hr />
+
+        <Table hover>
           <thead>
           <tr>
+            <th></th>
             <th>Category</th>
             <th>SKU</th>
             <th>US Name</th>
@@ -63,7 +78,12 @@ class PriceList extends Component {
           </thead>
           <tbody>
           {this.state.items.map(item => (
-            <tr key={item.sku}>
+            <tr key={item.id}>
+              <td><input type='checkbox'
+                         onClick={ e =>
+                           this.setState({
+                             selectedItems: this.state.selectedItems.concat(item.id)
+                           })} /></td>
               <td>{item.category}</td>
               <td>{item.sku}</td>
               <td>{item.us_name}</td>
@@ -73,14 +93,10 @@ class PriceList extends Component {
               <td>{item.jp_currency}</td>
               <td>{item.jp_price}</td>
               <td>
-                <Button color='danger'
-                        onClick={e => this.togglePriceChangeSku(e)}>
-                  Toggle to Change SKU Price
+                <Button className='btn-outline-info'
+                        onClick={e => this.toggleItemPriceChange(e, item)}>
+                  Price Change by SKU
                 </Button>
-                {this.state.showSkuPriceChange ?
-                  <SkuPriceChange item={item} /> :
-                  null
-                }
               </td>
             </tr>
             )

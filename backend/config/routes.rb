@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
-  resources :items
-  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+  resources :items do
+    collection do
+      put :category_price_change
+      put :update_selected_items_price
+    end
+  end
 end
